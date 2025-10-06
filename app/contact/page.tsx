@@ -1,27 +1,27 @@
 "use client";
-import { Github, Mail, Twitter } from "lucide-react";
+import { Smartphone, Mail, Linkedin } from "lucide-react";
 import Link from "next/link";
 import { Navigation } from "../components/nav";
 import { Card } from "../components/card";
 
 const socials = [
 	{
-		icon: <Twitter size={20} />,
-		href: "https://twitter.com/designedbydineth_",
-		label: "Twitter",
+		icon: <Linkedin size={20} />,
+		href: "www.linkedin.com/in/designedbydineth",
+		label: "Linkedin",
 		handle: "@designedbydineth_",
 	},
 	{
 		icon: <Mail size={20} />,
-		href: "mailto:dev@designedbydineth.com",
+		href: "mailto:designedbydineth@gmail.com",
 		label: "Email",
-		handle: "dev@designedbydineth.com",
+		handle: "designedbydineth@gmail.com",
 	},
 	{
-		icon: <Github size={20} />,
-		href: "https://github.com/designedbydineth",
-		label: "Github",
-		handle: "designedbydineth",
+		icon: <Smartphone size={20} />,
+		href: "Contact : +971 58 918 1226,
+		label: "Mobile",
+		handle: "+971 58 918 1226",
 	},
 ];
 
