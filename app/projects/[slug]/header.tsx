@@ -9,6 +9,7 @@ type Props = {
 		title: string;
 		description: string;
 		repository?: string;
+		cover_image_url?: string | null;
 	};
 
 	views: number;
@@ -45,6 +46,16 @@ export const Header: React.FC<Props> = ({ project, views }) => {
 			ref={ref}
 			className="relative isolate overflow-hidden bg-gradient-to-tl from-black via-zinc-900 to-black"
 		>
+			{project.cover_image_url && (
+				<div className="absolute inset-0 -z-10">
+					<img
+						src={project.cover_image_url}
+						alt={project.title}
+						className="w-full h-full object-cover opacity-20"
+					/>
+					<div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
+				</div>
+			)}
 			<div
 				className={`fixed inset-x-0 top-0 z-50 backdrop-blur lg:backdrop-blur-none duration-200 border-b lg:bg-transparent ${
 					isIntersecting
