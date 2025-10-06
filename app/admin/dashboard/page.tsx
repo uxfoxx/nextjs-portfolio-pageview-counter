@@ -1,6 +1,6 @@
 import { createServerClient } from '@/lib/supabase/server';
 import Link from 'next/link';
-import { Edit, Trash2, Eye, EyeOff } from 'lucide-react';
+import { FileEdit as Edit, Trash2, Eye, EyeOff } from 'lucide-react';
 import { format } from 'date-fns';
 import DeleteButton from '../components/DeleteButton';
 import TogglePublishButton from '../components/TogglePublishButton';
