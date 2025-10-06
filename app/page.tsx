@@ -34,7 +34,7 @@ export default function Home() {
 
       <div className="hidden w-screen h-px animate-glow md:block animate-fade-right bg-gradient-to-r from-zinc-300/0 via-zinc-300/50 to-zinc-300/0" />
       <div className="my-16 text-center animate-fade-in">
-        <h2 className="text-sm text-zinc-500 ">
+        <h2 className="text-sm text-zinc-500 max-w-[900px] ">
           I design with purpose — not just to make things look good, but to make them matter. Inspired by minimalism and precision, I create clean, high-performing visual systems for social media that bring clarity, identity, and impact.
 
 From feed layouts to typography, every detail is crafted to tell a story and move your brand forward.
