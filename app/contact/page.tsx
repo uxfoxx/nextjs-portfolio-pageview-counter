@@ -19,7 +19,7 @@ const socials = [
 	},
 	{
 		icon: <Smartphone size={20} />,
-		href: "Contact : +971 58 918 1226,
+		href: "Contact : +971 58 918 1226",
 		label: "Mobile",
 		handle: "+971 58 918 1226",
 	},
