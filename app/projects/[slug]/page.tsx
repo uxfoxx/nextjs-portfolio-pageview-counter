@@ -1,10 +1,10 @@
 import { notFound } from "next/navigation";
-import { allProjects } from "contentlayer/generated";
-import { Mdx } from "@/app/components/mdx";
 import { Header } from "./header";
 import "./mdx.css";
 import { ReportView } from "./view";
 import { Redis } from "@upstash/redis";
+import { getSupabaseClient } from "@/lib/supabase/server";
+import ReactMarkdown from 'react-markdown';
 
 export const revalidate = 60;
 
@@ -25,16 +25,26 @@ try {
 }
 
 export async function generateStaticParams(): Promise<Props["params"][]> {
-  return allProjects
-    .filter((p) => p.published)
-    .map((p) => ({
-      slug: p.slug,
-    }));
+  const supabase = getSupabaseClient();
+
+  const { data: projects } = await supabase
+    .from('projects')
+    .select('slug')
+    .eq('published', true);
+
+  return projects?.map((p) => ({ slug: p.slug })) || [];
 }
 
 export default async function PostPage({ params }: Props) {
   const slug = params?.slug;
-  const project = allProjects.find((project) => project.slug === slug);
+  const supabase = getSupabaseClient();
+
+  const { data: project } = await supabase
+    .from('projects')
+    .select('*')
+    .eq('slug', slug)
+    .eq('published', true)
+    .maybeSingle();
 
   if (!project) {
     notFound();
@@ -56,7 +66,7 @@ export default async function PostPage({ params }: Props) {
       <ReportView slug={project.slug} />
 
       <article className="px-4 py-12 mx-auto prose prose-zinc prose-quoteless">
-        <Mdx code={project.body.code} />
+        <ReactMarkdown>{project.content}</ReactMarkdown>
       </article>
     </div>
   );

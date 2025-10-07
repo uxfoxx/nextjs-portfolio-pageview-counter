@@ -1,11 +1,11 @@
 import Link from "next/link";
 import React from "react";
-import { allProjects } from "contentlayer/generated";
 import { Navigation } from "../components/nav";
 import { Card } from "../components/card";
 import { Article } from "./article";
 import { Redis } from "@upstash/redis";
 import { Eye } from "lucide-react";
+import { getSupabaseClient } from "@/lib/supabase/server";
 
 let redis: Redis | null = null;
 
@@ -19,7 +19,15 @@ try {
 
 export const revalidate = 60;
 export default async function ProjectsPage() {
-  const published = allProjects.filter((p) => p.published);
+  const supabase = getSupabaseClient();
+
+  const { data: projectsData } = await supabase
+    .from('projects')
+    .select('*')
+    .eq('published', true)
+    .order('date', { ascending: false });
+
+  const published = projectsData || [];
 
   let views: Record<string, number> = {};
 
