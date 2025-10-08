@@ -1,6 +1,6 @@
 import { getAdminSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
-import { getSupabaseClient } from '@/lib/supabase/server';
+import { getAdminSupabaseClient } from '@/lib/supabase/server';
 import DashboardClient from './dashboard-client';
 
 export default async function AdminDashboard() {
@@ -10,7 +10,7 @@ export default async function AdminDashboard() {
     redirect('/admin/login');
   }
 
-  const supabase = getSupabaseClient();
+  const supabase = getAdminSupabaseClient();
 
   const { data: projects, error } = await supabase
     .from('projects')

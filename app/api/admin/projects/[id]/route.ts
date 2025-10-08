@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getSupabaseClient } from '@/lib/supabase/server';
+import { getAdminSupabaseClient } from '@/lib/supabase/server';
 import { getAdminSession } from '@/lib/auth';
 
 export async function PUT(
@@ -26,7 +26,7 @@ export async function PUT(
       );
     }
 
-    const supabase = getSupabaseClient();
+    const supabase = getAdminSupabaseClient();
 
     const { data, error } = await supabase
       .from('projects')
@@ -74,7 +74,7 @@ export async function DELETE(
       );
     }
 
-    const supabase = getSupabaseClient();
+    const supabase = getAdminSupabaseClient();
 
     const { error } = await supabase
       .from('projects')
