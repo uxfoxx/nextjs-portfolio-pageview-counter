@@ -1,6 +1,6 @@
 import { getAdminSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
-import { getSupabaseClient } from '@/lib/supabase/server';
+import { getAdminSupabaseClient } from '@/lib/supabase/server';
 import ProjectForm from '../../components/project-form';
 
 export default async function EditProject({ params }: { params: { id: string } }) {
@@ -10,7 +10,7 @@ export default async function EditProject({ params }: { params: { id: string } }
     redirect('/admin/login');
   }
 
-  const supabase = getSupabaseClient();
+  const supabase = getAdminSupabaseClient();
 
   const { data: project, error } = await supabase
     .from('projects')
