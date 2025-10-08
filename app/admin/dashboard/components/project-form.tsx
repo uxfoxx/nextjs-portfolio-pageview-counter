@@ -3,6 +3,16 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
+
+const RichTextEditor = dynamic(() => import('@/app/components/rich-text-editor'), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-[300px] bg-zinc-800/50 border border-zinc-700 rounded-lg flex items-center justify-center">
+      <p className="text-zinc-400">Loading editor...</p>
+    </div>
+  ),
+});
 
 interface ProjectFormProps {
   initialData?: {
@@ -30,7 +40,7 @@ export default function ProjectForm({ initialData, isEdit = false }: ProjectForm
     content: initialData?.content || '',
     slug: initialData?.slug || '',
     date: initialData?.date || new Date().toISOString().split('T')[0],
-    published: initialData?.published || false,
+    published: initialData?.published !== undefined ? initialData.published : true,
     url: initialData?.url || '',
     repository: initialData?.repository || '',
   });
@@ -129,16 +139,12 @@ export default function ProjectForm({ initialData, isEdit = false }: ProjectForm
         </div>
 
         <div>
-          <label htmlFor="content" className="block text-sm font-medium text-zinc-100 mb-2">
-            Content * (Markdown supported)
+          <label className="block text-sm font-medium text-zinc-100 mb-2">
+            Content * (Rich Text Editor)
           </label>
-          <textarea
-            id="content"
-            value={formData.content}
-            onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-            rows={12}
-            className="w-full px-4 py-2 bg-zinc-800/50 border border-zinc-700 rounded-lg text-zinc-100 placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:border-transparent resize-none font-mono text-sm"
-            required
+          <RichTextEditor
+            content={formData.content}
+            onChange={(content) => setFormData({ ...formData, content })}
           />
         </div>
 
