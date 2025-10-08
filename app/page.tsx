@@ -1,6 +1,6 @@
 import Link from "next/link";
 import React from "react";
-import Particles from "./components/particles";
+import GradientMesh from "./components/gradient-mesh";
 
 const navigation = [
   { name: "Projects", href: "/projects" },
@@ -9,7 +9,7 @@ const navigation = [
 
 export default function Home() {
   return (
-    <div className="flex flex-col items-center justify-center w-screen h-screen overflow-hidden bg-gradient-to-tl from-black via-zinc-600/20 to-black">
+    <div className="flex flex-col items-center justify-center w-screen h-screen overflow-hidden bg-black">
       <nav className="my-16 animate-fade-in">
         <ul className="flex items-center justify-center gap-4">
           {navigation.map((item) => (
@@ -24,12 +24,11 @@ export default function Home() {
         </ul>
       </nav>
       <div className="hidden w-screen h-px animate-glow md:block animate-fade-left bg-gradient-to-r from-zinc-300/0 via-zinc-300/50 to-zinc-300/0" />
-      <Particles
+      <GradientMesh
         className="absolute inset-0 -z-10 animate-fade-in"
-        quantity={100}
       />
       <h1 className="py-3.5 px-0.5 z-10 text-4xl text-transparent duration-1000 bg-white cursor-default text-edge-outline animate-title font-display sm:text-6xl md:text-9xl whitespace-nowrap bg-clip-text ">
-        Hi, I’m Dineth
+        Hi, I'm Dineth
       </h1>
 
       <div className="hidden w-screen h-px animate-glow md:block animate-fade-right bg-gradient-to-r from-zinc-300/0 via-zinc-300/50 to-zinc-300/0" />
@@ -39,9 +38,9 @@ export default function Home() {
 
 From feed layouts to typography, every detail is crafted to tell a story and move your brand forward.
 
-I’m skilled in industry-standard design tools and bring more than just technical ability,I bring strategy, creativity, and a sharp eye for detail. I adapt fast, collaborate easily, and treat every project as an opportunity to elevate your brand.
+I'm skilled in industry-standard design tools and bring more than just technical ability,I bring strategy, creativity, and a sharp eye for detail. I adapt fast, collaborate easily, and treat every project as an opportunity to elevate your brand.
 
-If your brand has a voice, I’ll make sure the world sees it.
+If your brand has a voice, I'll make sure the world sees it.
 
         </h2>
       </div>
