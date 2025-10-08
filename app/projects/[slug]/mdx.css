@@ -30,3 +30,32 @@
   [data-rehype-pretty-code-title] + pre {
     @apply mt-0;
   }
+
+  article img {
+    @apply rounded-lg shadow-lg;
+  }
+
+  article a {
+    @apply text-blue-600 hover:text-blue-700 underline;
+  }
+
+  article h2 {
+    @apply text-2xl font-bold mt-8 mb-4;
+  }
+
+  article ul,
+  article ol {
+    @apply my-4 ml-6;
+  }
+
+  article blockquote {
+    @apply border-l-4 border-zinc-300 pl-4 italic my-4;
+  }
+
+  article code {
+    @apply bg-zinc-100 px-1 py-0.5 rounded text-sm;
+  }
+
+  article pre code {
+    @apply bg-transparent px-0 py-0;
+  }

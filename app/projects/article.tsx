@@ -2,6 +2,17 @@ import type { Project } from "@/lib/supabase/types";
 import Link from "next/link";
 import { Eye, View } from "lucide-react";
 
+type Project = {
+	id: string;
+	title: string;
+	description: string;
+	slug: string;
+	date: string;
+	published: boolean;
+	url?: string;
+	repository?: string;
+};
+
 type Props = {
 	project: Project;
 	views: number;
