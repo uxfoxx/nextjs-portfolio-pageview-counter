@@ -64,6 +64,8 @@ export default function GradientMesh({ className = "" }: GradientMeshProps) {
       ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
       ctx.fillRect(0, 0, width, height);
 
+      ctx.globalCompositeOperation = "lighter";
+
       blobs.forEach((blob) => {
         blob.update();
 
@@ -84,9 +86,8 @@ export default function GradientMesh({ className = "" }: GradientMeshProps) {
         ctx.fill();
       });
 
-      ctx.globalCompositeOperation = "lighter";
-      animationRef.current = requestAnimationFrame(animate);
       ctx.globalCompositeOperation = "source-over";
+      animationRef.current = requestAnimationFrame(animate);
     };
 
     const handleResize = () => {
