@@ -29,7 +29,7 @@ export default function Example() {
     <div className="bg-gradient-to-tl from-zinc-900/0 via-zinc-900 to-zinc-900/0">
       <Navigation />
       <div className="container flex items-center justify-center min-h-screen px-4 mx-auto">
-        <div className="grid w-full grid-cols-1 gap-8 mx-auto mt-32 sm:mt-0 sm:grid-cols-3 lg:gap-12">
+        <div className="grid w-full grid-cols-1 gap-8 mx-auto mt-32 sm:mt-0 sm:grid-cols-3 lg:gap-8">
           {socials.map((s, i) => (
             <Card key={i}>
               <a
@@ -47,7 +47,7 @@ export default function Example() {
                   {s.icon}
                 </span>
                 <div className="z-10 flex flex-col items-center">
-                  <span className="lg:text-xl font-medium duration-150 xl:text-3xl text-zinc-200 group-hover:text-white font-display">
+                  <span className="lg:text-xl font-medium duration-150 xl:text-xl text-zinc-200 group-hover:text-white font-display">
                     {s.handle}
                   </span>
                   <span className="mt-4 text-sm text-center duration-1000 text-zinc-400 group-hover:text-zinc-200">

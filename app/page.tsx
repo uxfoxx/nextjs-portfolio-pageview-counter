@@ -29,17 +29,17 @@ export default function Home() {
         quantity={100}
       />
       <h1 className="py-3.5 px-0.5 z-10 text-4xl text-transparent duration-1000 bg-white cursor-default text-edge-outline animate-title font-display sm:text-6xl md:text-9xl whitespace-nowrap bg-clip-text ">
-        DesignedByDineth
+        Hi, I’m Dineth
       </h1>
 
       <div className="hidden w-screen h-px animate-glow md:block animate-fade-right bg-gradient-to-r from-zinc-300/0 via-zinc-300/50 to-zinc-300/0" />
-      <div className="my-16 text-center animate-fade-in">
+      <div className="my-6 text-center animate-fade-in">
         <h2 className="text-sm text-zinc-500 max-w-[900px] ">
-          I design with purpose — not just to make things look good, but to make them matter. Inspired by minimalism and precision, I create clean, high-performing visual systems for social media that bring clarity, identity, and impact.
+          I design with purpose,not just to make things look good, but to make them matter. Inspired by minimalism and precision, I create clean, high-performing visual systems for social media that bring clarity, identity, and impact.
 
 From feed layouts to typography, every detail is crafted to tell a story and move your brand forward.
 
-I’m skilled in industry-standard design tools and bring more than just technical ability — I bring strategy, creativity, and a sharp eye for detail. I adapt fast, collaborate easily, and treat every project as an opportunity to elevate your brand.
+I’m skilled in industry-standard design tools and bring more than just technical ability,I bring strategy, creativity, and a sharp eye for detail. I adapt fast, collaborate easily, and treat every project as an opportunity to elevate your brand.
 
 If your brand has a voice, I’ll make sure the world sees it.
 
