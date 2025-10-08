@@ -1,12 +1,18 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { isAuthenticatedFromRequest } from './lib/auth/pin';
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  if (pathname.startsWith('/admin/dashboard')) {
-    const session = request.cookies.get('admin-session');
+  if (pathname.startsWith('/admin/login')) {
+    return NextResponse.next();
+  }
 
-    if (!session || session.value !== 'authenticated') {
+  if (pathname.startsWith('/admin')) {
+    const authenticated = isAuthenticatedFromRequest(request);
+
+    if (!authenticated) {
       return NextResponse.redirect(new URL('/admin/login', request.url));
     }
   }
@@ -15,5 +21,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: '/admin/dashboard/:path*',
+  matcher: '/admin/:path*',
 };

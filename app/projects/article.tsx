@@ -1,3 +1,4 @@
+import type { Project } from "@/lib/supabase/types";
 import Link from "next/link";
 import { Eye, View } from "lucide-react";
 

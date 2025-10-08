@@ -3,9 +3,10 @@ import { Header } from "./header";
 import "./mdx.css";
 import { ReportView } from "./view";
 import { Redis } from "@upstash/redis";
-import { getSupabaseClient } from "@/lib/supabase/server";
+import { createServerClient } from "@/lib/supabase/server";
 
 export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 type Props = {
   params: {
@@ -23,27 +24,16 @@ try {
   console.warn("Redis not configured, view counts will be disabled");
 }
 
-export async function generateStaticParams(): Promise<Props["params"][]> {
-  const supabase = getSupabaseClient();
-
-  const { data: projects } = await supabase
-    .from('projects')
-    .select('slug')
-    .eq('published', true);
-
-  return projects?.map((p) => ({ slug: p.slug })) || [];
-}
-
 export default async function PostPage({ params }: Props) {
   const slug = params?.slug;
-  const supabase = getSupabaseClient();
 
+  const supabase = createServerClient();
   const { data: project } = await supabase
     .from('projects')
     .select('*')
     .eq('slug', slug)
     .eq('published', true)
-    .maybeSingle();
+    .single();
 
   if (!project) {
     notFound();
@@ -61,13 +51,12 @@ export default async function PostPage({ params }: Props) {
 
   return (
     <div className="bg-zinc-50 min-h-screen">
-      <Header project={project} views={views} />
-      <ReportView slug={project.slug} />
+      <Header project={project as any} views={views} />
+      <ReportView slug={(project as any).slug} />
 
-      <article
-        className="px-4 py-12 mx-auto prose prose-zinc prose-quoteless"
-        dangerouslySetInnerHTML={{ __html: project.content }}
-      />
+      <article className="px-4 py-12 mx-auto prose prose-zinc prose-quoteless">
+        <div dangerouslySetInnerHTML={{ __html: (project as any).content || '' }} />
+      </article>
     </div>
   );
 }
