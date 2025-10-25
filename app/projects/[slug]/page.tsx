@@ -64,10 +64,15 @@ export default async function PostPage({ params }: Props) {
       <Header project={project} views={views} />
       <ReportView slug={project.slug} />
 
-      <article
-        className="px-4 py-12 mx-auto prose prose-zinc prose-quoteless"
-        dangerouslySetInnerHTML={{ __html: project.content }}
-      />
+      <article className="px-4 py-12 mx-auto prose prose-zinc prose-quoteless max-w-4xl">
+        {project.content ? (
+          <div dangerouslySetInnerHTML={{ __html: project.content }} />
+        ) : (
+          <div className="text-center py-12 text-zinc-500">
+            <p className="text-lg">No content available for this project.</p>
+          </div>
+        )}
+      </article>
     </div>
   );
 }
