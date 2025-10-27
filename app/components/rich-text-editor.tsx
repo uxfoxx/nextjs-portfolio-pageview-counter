@@ -73,30 +73,32 @@ export default function RichTextEditor({ content, onChange }: RichTextEditorProp
   };
 
   const handleImageUpload = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file || !editor) return;
+    const files = event.target.files;
+    if (!files || files.length === 0 || !editor) return;
 
     setUploading(true);
 
     try {
-      const compressedFile = await compressImage(file);
+      // Process each file sequentially to maintain order
+      for (const file of Array.from(files)) {
+        const compressedFile = await compressImage(file);
 
-      const formData = new FormData();
-      formData.append('file', compressedFile);
+        const formData = new FormData();
+        formData.append('file', compressedFile);
 
-      const response = await fetch('/api/admin/upload-image', {
-        method: 'POST',
-        body: formData,
-      });
+        const response = await fetch('/api/admin/upload-image', {
+          method: 'POST',
+          body: formData,
+        });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Upload failed');
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Upload failed');
+        }
+
+        const { url } = await response.json();
+        editor.chain().focus().setImage({ src: url }).run();
       }
-
-      const { url } = await response.json();
-
-      editor.chain().focus().setImage({ src: url }).run();
     } catch (error) {
       console.error('Upload error:', error);
       alert(error instanceof Error ? error.message : 'Failed to upload image');
@@ -229,6 +231,7 @@ export default function RichTextEditor({ content, onChange }: RichTextEditorProp
           <input
             type="file"
             accept="image/jpeg,image/png,image/webp,image/gif"
+            multiple
             onChange={handleImageUpload}
             disabled={uploading}
             className="hidden"

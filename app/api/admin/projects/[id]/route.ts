@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAdminSupabaseClient } from '@/lib/supabase/server';
 import { getAdminSession } from '@/lib/auth';
+import { revalidatePath } from 'next/cache';
 
 export async function PUT(
   request: NextRequest,
@@ -45,11 +46,16 @@ export async function PUT(
       .single();
 
     if (error) {
+      console.error('Supabase update error:', error);
       return NextResponse.json(
         { error: error.message },
         { status: 400 }
       );
     }
+
+    // Revalidate the projects page and the updated project page
+    revalidatePath('/projects');
+    revalidatePath(`/projects/${data.slug}`);
 
     return NextResponse.json(data);
   } catch (error) {
@@ -76,16 +82,38 @@ export async function DELETE(
 
     const supabase = getAdminSupabaseClient();
 
+    // First, get the project to retrieve its slug for cache invalidation
+    const { data: project, error: fetchError } = await supabase
+      .from('projects')
+      .select('slug')
+      .eq('id', params.id)
+      .single();
+
+    if (fetchError) {
+      console.error('Supabase fetch error:', fetchError);
+      return NextResponse.json(
+        { error: fetchError.message },
+        { status: 400 }
+      );
+    }
+
     const { error } = await supabase
       .from('projects')
       .delete()
       .eq('id', params.id);
 
     if (error) {
+      console.error('Supabase delete error:', error);
       return NextResponse.json(
         { error: error.message },
         { status: 400 }
       );
+    }
+
+    // Revalidate the projects page and the deleted project page
+    revalidatePath('/projects');
+    if (project?.slug) {
+      revalidatePath(`/projects/${project.slug}`);
     }
 
     return NextResponse.json({ success: true });

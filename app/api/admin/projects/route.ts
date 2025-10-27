@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAdminSupabaseClient } from '@/lib/supabase/server';
 import { getAdminSession } from '@/lib/auth';
+import { revalidatePath } from 'next/cache';
 
 export async function POST(request: NextRequest) {
   try {
@@ -43,11 +44,16 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (error) {
+      console.error('Supabase insert error:', error);
       return NextResponse.json(
         { error: error.message },
         { status: 400 }
       );
     }
+
+    // Revalidate the projects page and the new project page
+    revalidatePath('/projects');
+    revalidatePath(`/projects/${data.slug}`);
 
     return NextResponse.json(data);
   } catch (error) {
