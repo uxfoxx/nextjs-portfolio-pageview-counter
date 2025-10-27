@@ -6,19 +6,7 @@ import Image from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
 import imageCompression from 'browser-image-compression';
 import { useState, useCallback } from 'react';
-import {
-  Bold,
-  Italic,
-  List,
-  ListOrdered,
-  Heading2,
-  Quote,
-  Code,
-  ImageIcon,
-  Link as LinkIcon,
-  Undo,
-  Redo
-} from 'lucide-react';
+import { Bold, Italic, List, ListOrdered, Heading2, Quote, Code, Image as ImageIcon, Link as LinkIcon, Undo, Redo } from 'lucide-react';
 
 interface RichTextEditorProps {
   content: string;
