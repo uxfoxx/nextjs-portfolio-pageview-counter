@@ -18,7 +18,7 @@ export async function PUT(
     }
 
     const body = await request.json();
-    const { title, description, content, slug, date, published, url, repository } = body;
+    const { title, description, content, slug, date, published, url, repository, cover_image_url } = body;
 
     if (!title || !description || !content || !slug || !date) {
       return NextResponse.json(
@@ -40,6 +40,7 @@ export async function PUT(
         published: published || false,
         url: url || null,
         repository: repository || null,
+        cover_image_url,
       })
       .eq('id', params.id)
       .select()

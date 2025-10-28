@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { title, description, content, slug, date, published, url, repository } = body;
+    const { title, description, content, slug, date, published, url, repository, cover_image_url } = body;
 
     if (!title || !description || !content || !slug || !date) {
       return NextResponse.json(
@@ -38,6 +38,7 @@ export async function POST(request: NextRequest) {
           published: published || false,
           url: url || null,
           repository: repository || null,
+          cover_image_url: cover_image_url || null,
         },
       ])
       .select()

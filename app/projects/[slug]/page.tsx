@@ -40,7 +40,7 @@ export default async function PostPage({ params }: Props) {
 
   const { data: project } = await supabase
     .from('projects')
-    .select('*')
+    .select('id, title, slug, description, content, technologies, github_url, live_url, featured, created_at, cover_image_url')
     .eq('slug', slug)
     .eq('published', true)
     .maybeSingle();
@@ -53,6 +53,17 @@ export default async function PostPage({ params }: Props) {
 
   if (redis) {
     try {
+        {/* Cover Image */}
+        {project.cover_image_url && (
+          <div className="mb-8 rounded-xl overflow-hidden shadow-2xl">
+            <img
+              src={project.cover_image_url}
+              alt={`${project.title} cover`}
+              className="w-full h-64 md:h-80 lg:h-96 object-cover"
+            />
+          </div>
+        )}
+        
       views = (await redis.get<number>(["pageviews", "projects", slug].join(":"))) ?? 0;
     } catch (e) {
       console.warn("Failed to fetch views from Redis");

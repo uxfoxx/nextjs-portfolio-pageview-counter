@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
+import { Save, X, Upload, Image as ImageIcon, Trash2 } from 'lucide-react';
+import imageCompression from 'browser-image-compression';
 
 const RichTextEditor = dynamic(() => import('@/app/components/rich-text-editor'), {
   ssr: false,
@@ -25,6 +27,7 @@ interface ProjectFormProps {
     published: boolean;
     url?: string;
     repository?: string;
+    cover_image_url?: string;
   };
   isEdit?: boolean;
 }
@@ -45,6 +48,12 @@ export default function ProjectForm({ initialData, isEdit = false }: ProjectForm
     repository: initialData?.repository || '',
   });
 
+  const [coverImageUrl, setCoverImageUrl] = useState(initialData?.cover_image_url || '');
+  const [coverImageFile, setCoverImageFile] = useState<File | null>(null);
+  const [coverImagePreview, setCoverImagePreview] = useState(initialData?.cover_image_url || '');
+  const [uploadingCover, setUploadingCover] = useState(false);
+  const [dragActive, setDragActive] = useState(false);
+
   const generateSlug = (title: string) => {
     return title
       .toLowerCase()
@@ -60,6 +69,90 @@ export default function ProjectForm({ initialData, isEdit = false }: ProjectForm
     }));
   };
 
+  const handleCoverImageChange = async (file: File) => {
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file');
+      return;
+    }
+
+    setCoverImageFile(file);
+    
+    // Create preview URL
+    const previewUrl = URL.createObjectURL(file);
+    setCoverImagePreview(previewUrl);
+
+    // Upload the image
+    setUploadingCover(true);
+    try {
+      // Compress the image
+      const compressedFile = await imageCompression(file, {
+        maxSizeMB: 1,
+        maxWidthOrHeight: 1920,
+        useWebWorker: true,
+      });
+
+      const formData = new FormData();
+      formData.append('image', compressedFile);
+
+      const response = await fetch('/api/admin/upload-image', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to upload image');
+      }
+
+      const data = await response.json();
+      setCoverImageUrl(data.url);
+    } catch (error) {
+      console.error('Error uploading cover image:', error);
+      alert('Failed to upload cover image. Please try again.');
+      // Reset on error
+      setCoverImageFile(null);
+      setCoverImagePreview('');
+      URL.revokeObjectURL(previewUrl);
+    } finally {
+      setUploadingCover(false);
+    }
+  };
+
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      handleCoverImageChange(file);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setDragActive(false);
+    
+    const file = e.dataTransfer.files?.[0];
+    if (file) {
+      handleCoverImageChange(file);
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setDragActive(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setDragActive(false);
+  };
+
+  const removeCoverImage = () => {
+    setCoverImageFile(null);
+    setCoverImageUrl('');
+    if (coverImagePreview && coverImagePreview.startsWith('blob:')) {
+      URL.revokeObjectURL(coverImagePreview);
+    }
+    setCoverImagePreview('');
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -72,10 +165,15 @@ export default function ProjectForm({ initialData, isEdit = false }: ProjectForm
 
       const method = isEdit ? 'PUT' : 'POST';
 
+      const submitData = {
+        ...formData,
+        cover_image_url: coverImageUrl || null,
+      };
+
       const response = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(submitData),
       });
 
       if (response.ok) {
@@ -136,6 +234,96 @@ export default function ProjectForm({ initialData, isEdit = false }: ProjectForm
             className="w-full px-4 py-2 bg-zinc-800/50 border border-zinc-700 rounded-lg text-zinc-100 placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:border-transparent resize-none"
             required
           />
+        </div>
+
+        {/* Cover Image Upload */}
+        <div className="space-y-2">
+          <label className="block text-sm font-medium text-zinc-100">
+            Cover Image
+          </label>
+          
+          {!coverImagePreview ? (
+            <div
+              className={`relative border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
+                dragActive
+                  ? 'border-zinc-400 bg-zinc-800/50'
+                  : 'border-zinc-700 hover:border-zinc-600'
+              }`}
+              onDrop={handleDrop}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+            >
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleFileInputChange}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                disabled={uploadingCover}
+              />
+              <div className="space-y-4">
+                <div className="mx-auto w-12 h-12 text-zinc-400">
+                  {uploadingCover ? (
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-zinc-400"></div>
+                  ) : (
+                    <Upload className="w-full h-full" />
+                  )}
+                </div>
+                <div>
+                  <p className="text-lg font-medium text-zinc-100">
+                    {uploadingCover ? 'Uploading...' : 'Drop your cover image here'}
+                  </p>
+                  <p className="text-sm text-zinc-400">
+                    or click to browse (PNG, JPG, GIF up to 10MB)
+                  </p>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="relative">
+              <div className="relative aspect-video rounded-lg overflow-hidden bg-zinc-800">
+                <img
+                  src={coverImagePreview}
+                  alt="Cover preview"
+                  className="w-full h-full object-cover"
+                />
+                {uploadingCover && (
+                  <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+                  </div>
+                )}
+              </div>
+              <button
+                type="button"
+                onClick={removeCoverImage}
+                className="absolute top-2 right-2 p-1 bg-red-600 text-white rounded-full hover:bg-red-700 transition-colors"
+                disabled={uploadingCover}
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+              <div className="mt-2 flex items-center justify-between">
+                <p className="text-sm text-zinc-400">
+                  {uploadingCover ? 'Processing image...' : 'Cover image ready'}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const input = document.createElement('input');
+                    input.type = 'file';
+                    input.accept = 'image/*';
+                    input.onchange = (e) => {
+                      const file = (e.target as HTMLInputElement).files?.[0];
+                      if (file) handleCoverImageChange(file);
+                    };
+                    input.click();
+                  }}
+                  className="text-sm text-zinc-400 hover:text-zinc-300 font-medium"
+                  disabled={uploadingCover}
+                >
+                  Change Image
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         <div>
@@ -223,10 +411,10 @@ export default function ProjectForm({ initialData, isEdit = false }: ProjectForm
       <div className="flex gap-4">
         <button
           type="submit"
-          disabled={loading}
+          disabled={loading || uploadingCover}
           className="px-6 py-3 bg-zinc-100 hover:bg-white text-zinc-900 font-semibold rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {loading ? 'Saving...' : isEdit ? 'Update Project' : 'Create Project'}
+          {loading || uploadingCover ? 'Processing...' : isEdit ? 'Update Project' : 'Create Project'}
         </button>
 
         <Link
