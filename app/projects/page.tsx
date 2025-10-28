@@ -84,6 +84,15 @@ export default async function ProjectsPage() {
             <Card>
               <Link href={`/projects/${featured.slug}`}>
                 <article className="relative w-full h-full p-4 md:p-8">
+                  {featured.cover_image_url && (
+                    <div className="mb-6 -mx-4 md:-mx-8">
+                      <img
+                        src={featured.cover_image_url}
+                        alt={`${featured.title} cover`}
+                        className="w-full h-64 md:h-80 object-cover"
+                      />
+                    </div>
+                  )}
                   <div className="flex items-center justify-between gap-2">
                     <div className="text-xs text-zinc-100">
                       {featured.date ? (
