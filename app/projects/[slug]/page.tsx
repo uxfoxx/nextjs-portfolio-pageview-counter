@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
 import { Header } from "./header";
-import "./mdx.css";
 import { ReportView } from "./view";
 import { Redis } from "@upstash/redis";
 import { getSupabaseClient } from "@/lib/supabase/server";
@@ -50,7 +49,7 @@ export default async function PostPage({ params }: Props) {
 
   const { data: project } = await supabase
     .from('projects')
-    .select('id, title, slug, description, content, technologies, github_url, live_url, featured, created_at, cover_image_url')
+    .select('id, title, slug, description, content, date, url, repository, cover_image_url')
     .eq('slug', slug)
     .eq('published', true)
     .maybeSingle();

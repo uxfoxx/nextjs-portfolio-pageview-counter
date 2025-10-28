@@ -23,7 +23,7 @@ export default async function ProjectsPage() {
 
   const { data: projectsData } = await supabase
     .from('projects')
-    .select('*')
+    .select('id, title, slug, description, content, date, published, url, repository, cover_image_url')
     .eq('published', true)
     .order('date', { ascending: false });
 
