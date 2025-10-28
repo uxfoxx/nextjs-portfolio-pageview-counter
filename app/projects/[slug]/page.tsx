@@ -26,17 +26,27 @@ try {
 export async function generateStaticParams(): Promise<Props["params"][]> {
   const supabase = getSupabaseClient();
 
+  console.log('[generateStaticParams] Fetching published projects for static generation...');
+
   const { data: projects } = await supabase
     .from('projects')
     .select('slug')
     .eq('published', true);
 
-  return projects?.map((p) => ({ slug: p.slug })) || [];
+  const slugs = projects?.map((p) => ({ slug: p.slug })) || [];
+  console.log('[generateStaticParams] Generated slugs:', slugs.map(s => s.slug));
+  console.log('[generateStaticParams] Total projects found:', slugs.length);
+
+  return slugs;
 }
 
 export default async function PostPage({ params }: Props) {
   const slug = params?.slug;
+  console.log('[PostPage] Received slug parameter:', slug);
+
   const supabase = getSupabaseClient();
+
+  console.log('[PostPage] Querying project with slug:', slug);
 
   const { data: project } = await supabase
     .from('projects')
@@ -45,7 +55,20 @@ export default async function PostPage({ params }: Props) {
     .eq('published', true)
     .maybeSingle();
 
+  console.log('[PostPage] Query result:', project ? 'Project found' : 'No project found');
+  if (project) {
+    console.log('[PostPage] Project details:', {
+      id: project.id,
+      title: project.title,
+      slug: project.slug,
+      published: true // We only query published projects
+    });
+  } else {
+    console.log('[PostPage] No project found for slug:', slug);
+  }
+
   if (!project) {
+    console.log('[PostPage] Calling notFound() for slug:', slug);
     notFound();
   }
 
