@@ -5,9 +5,11 @@ import { revalidatePath } from 'next/cache';
 
 export async function POST(request: NextRequest) {
   try {
-    // Debug: Check if service role key is available
+    // Debug: Check if service role key is available and properly loaded
     console.log('Service role key available:', !!process.env.SUPABASE_SERVICE_ROLE_KEY);
     console.log('Service role key (first 20 chars):', process.env.SUPABASE_SERVICE_ROLE_KEY?.substring(0, 20));
+    console.log('Supabase URL:', process.env.NEXT_PUBLIC_SUPABASE_URL);
+    console.log('Environment NODE_ENV:', process.env.NODE_ENV);
 
     const isAuthenticated = await getAdminSession();
 
@@ -39,8 +41,18 @@ export async function POST(request: NextRequest) {
 
     const supabase = getAdminSupabaseClient();
     
-    // Debug: Log the client configuration
-    console.log('Supabase client created with service role');
+    // Debug: Test the client by attempting a simple query first
+    console.log('Testing Supabase client with service role...');
+    const { data: testData, error: testError } = await supabase
+      .from('projects')
+      .select('count')
+      .limit(1);
+    
+    if (testError) {
+      console.error('Service role client test failed:', testError);
+    } else {
+      console.log('Service role client test successful');
+    }
 
     // Check if slug already exists
     const { data: existingProject } = await supabase
