@@ -92,7 +92,7 @@ export default function ProjectForm({ initialData, isEdit = false }: ProjectForm
       });
 
       const formData = new FormData();
-      formData.append('image', compressedFile);
+      formData.append('file', compressedFile);
 
       const response = await fetch('/api/admin/upload-image', {
         method: 'POST',
