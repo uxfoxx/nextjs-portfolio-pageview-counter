@@ -25,7 +25,7 @@ export async function verifyAdminPin(pin: string): Promise<boolean> {
     }
 
     if (!data) {
-      console.error('[Auth Error] Admin PIN not found in database');
+      console.warn('[Auth Warning] Admin PIN not found in database, using fallback');
       const fallbackPin = process.env.ADMIN_PIN;
       if (fallbackPin) {
         console.log('[Auth] Using fallback PIN from environment variable');

@@ -53,17 +53,6 @@ export default async function PostPage({ params }: Props) {
 
   if (redis) {
     try {
-        {/* Cover Image */}
-        {project.cover_image_url && (
-          <div className="mb-8 rounded-xl overflow-hidden shadow-2xl">
-            <img
-              src={project.cover_image_url}
-              alt={`${project.title} cover`}
-              className="w-full h-64 md:h-80 lg:h-96 object-cover"
-            />
-          </div>
-        )}
-        
       views = (await redis.get<number>(["pageviews", "projects", slug].join(":"))) ?? 0;
     } catch (e) {
       console.warn("Failed to fetch views from Redis");
@@ -76,6 +65,17 @@ export default async function PostPage({ params }: Props) {
       <ReportView slug={project.slug} />
 
       <article className="px-4 py-12 mx-auto prose prose-zinc prose-quoteless max-w-4xl">
+        {/* Cover Image */}
+        {project.cover_image_url && (
+          <div className="mb-8 rounded-xl overflow-hidden shadow-2xl">
+            <img
+              src={project.cover_image_url}
+              alt={`${project.title} cover`}
+              className="w-full h-64 md:h-80 lg:h-96 object-cover"
+            />
+          </div>
+        )}
+        
         {project.content ? (
           <div dangerouslySetInnerHTML={{ __html: project.content }} />
         ) : (

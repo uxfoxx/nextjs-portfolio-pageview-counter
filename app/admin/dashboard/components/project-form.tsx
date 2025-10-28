@@ -153,6 +153,15 @@ export default function ProjectForm({ initialData, isEdit = false }: ProjectForm
     setCoverImagePreview('');
   };
 
+  // Cleanup blob URLs on unmount
+  React.useEffect(() => {
+    return () => {
+      if (coverImagePreview && coverImagePreview.startsWith('blob:')) {
+        URL.revokeObjectURL(coverImagePreview);
+      }
+    };
+  }, [coverImagePreview]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');

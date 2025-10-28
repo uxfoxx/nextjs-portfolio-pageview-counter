@@ -20,26 +20,50 @@ export async function PUT(
     const body = await request.json();
     const { title, description, content, slug, date, published, url, repository, cover_image_url } = body;
 
-    if (!title || !description || !content || !slug || !date) {
+    if (!title?.trim() || !description?.trim() || !content?.trim() || !slug?.trim() || !date) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
       );
     }
 
+    // Validate slug format
+    const slugRegex = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+    if (!slugRegex.test(slug)) {
+      return NextResponse.json(
+        { error: 'Slug must contain only lowercase letters, numbers, and hyphens' },
+        { status: 400 }
+      );
+    }
+
     const supabase = getAdminSupabaseClient();
+
+    // Check if slug already exists (excluding current project)
+    const { data: existingProject } = await supabase
+      .from('projects')
+      .select('id')
+      .eq('slug', slug)
+      .neq('id', params.id)
+      .maybeSingle();
+
+    if (existingProject) {
+      return NextResponse.json(
+        { error: 'A project with this slug already exists' },
+        { status: 400 }
+      );
+    }
 
     const { data, error } = await supabase
       .from('projects')
       .update({
-        title,
-        description,
-        content,
-        slug,
+        title: title.trim(),
+        description: description.trim(),
+        content: content.trim(),
+        slug: slug.trim(),
         date,
         published: published || false,
-        url: url || null,
-        repository: repository || null,
+        url: url?.trim() || null,
+        repository: repository?.trim() || null,
         cover_image_url,
       })
       .eq('id', params.id)

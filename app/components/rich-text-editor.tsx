@@ -5,7 +5,7 @@ import StarterKit from '@tiptap/starter-kit';
 import Image from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
 import imageCompression from 'browser-image-compression';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Bold, Italic, List, ListOrdered, Heading2, Quote, Code, Image as ImageIcon, Link as LinkIcon, Undo, Redo } from 'lucide-react';
 
 interface RichTextEditorProps {
@@ -42,6 +42,13 @@ export default function RichTextEditor({ content, onChange }: RichTextEditorProp
       },
     },
   });
+
+  // Update editor content when prop changes
+  useEffect(() => {
+    if (editor && content !== editor.getHTML()) {
+      editor.commands.setContent(content);
+    }
+  }, [editor, content]);
 
   const compressImage = async (file: File): Promise<File> => {
     const options = {

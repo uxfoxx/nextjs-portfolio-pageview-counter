@@ -68,6 +68,13 @@ export async function POST(request: NextRequest) {
       .from('project-images')
       .getPublicUrl(filePath);
 
+    if (!urlData.publicUrl) {
+      return NextResponse.json(
+        { error: 'Failed to generate public URL for uploaded image' },
+        { status: 500 }
+      );
+    }
+
     return NextResponse.json({
       url: urlData.publicUrl,
       path: filePath,
