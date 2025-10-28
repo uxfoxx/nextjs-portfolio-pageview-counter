@@ -10,6 +10,7 @@ type Project = {
 	published: boolean;
 	url?: string;
 	repository?: string;
+	cover_image_url?: string;
 };
 
 type Props = {
@@ -21,6 +22,15 @@ export const Article: React.FC<Props> = ({ project, views }) => {
 	return (
 		<Link href={`/projects/${project.slug}`}>
 			<article className="p-4 md:p-8">
+				{project.cover_image_url && (
+					<div className="mb-4 -mx-4 md:-mx-8">
+						<img
+							src={project.cover_image_url}
+							alt={`${project.title} cover`}
+							className="w-full h-48 object-cover"
+						/>
+					</div>
+				)}
 				<div className="flex justify-between gap-2 items-center">
 					<span className="text-xs duration-1000 text-zinc-200 group-hover:text-white group-hover:border-zinc-200 drop-shadow-orange">
 						{project.date ? (
