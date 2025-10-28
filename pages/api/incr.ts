@@ -7,7 +7,12 @@ export const config = {
 };
 
 export default async function incr(req: NextRequest): Promise<NextResponse> {
+  console.log('[incr API] Received request method:', req.method);
+  console.log('[incr API] Request headers:', Object.fromEntries(req.headers.entries()));
+  console.log('[incr API] Request URL:', req.url);
+
   if (req.method !== "POST") {
+    console.log('[incr API] Method not allowed - expected POST, got:', req.method);
     return new NextResponse("use POST", { status: 405 });
   }
   if (req.headers.get("Content-Type") !== "application/json") {
