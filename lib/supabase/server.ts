@@ -9,6 +9,10 @@ export function getSupabaseClient() {
 }
 
 export function getAdminSupabaseClient() {
+  console.log('Creating admin Supabase client...');
+  console.log('URL:', supabaseUrl);
+  console.log('Service role key available:', !!supabaseServiceRoleKey);
+  
   return createClient(supabaseUrl, supabaseServiceRoleKey, {
     auth: {
       autoRefreshToken: false,

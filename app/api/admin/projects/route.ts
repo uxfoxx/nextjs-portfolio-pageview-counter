@@ -5,6 +5,10 @@ import { revalidatePath } from 'next/cache';
 
 export async function POST(request: NextRequest) {
   try {
+    // Debug: Check if service role key is available
+    console.log('Service role key available:', !!process.env.SUPABASE_SERVICE_ROLE_KEY);
+    console.log('Service role key (first 20 chars):', process.env.SUPABASE_SERVICE_ROLE_KEY?.substring(0, 20));
+
     const isAuthenticated = await getAdminSession();
 
     if (!isAuthenticated) {
@@ -34,6 +38,9 @@ export async function POST(request: NextRequest) {
     }
 
     const supabase = getAdminSupabaseClient();
+    
+    // Debug: Log the client configuration
+    console.log('Supabase client created with service role');
 
     // Check if slug already exists
     const { data: existingProject } = await supabase
@@ -48,6 +55,12 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+
+    console.log('Attempting to insert project with data:', {
+      title: title.trim(),
+      slug: slug.trim(),
+      published: published || false
+    });
 
     const { data, error } = await supabase
       .from('projects')
@@ -68,12 +81,19 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (error) {
-      console.error('Supabase insert error:', error);
+      console.error('Supabase insert error:', {
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        code: error.code
+      });
       return NextResponse.json(
         { error: error.message },
         { status: 400 }
       );
     }
+
+    console.log('Project created successfully:', data.id);
 
     // Revalidate the projects page and the new project page
     revalidatePath('/projects');
@@ -81,6 +101,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(data);
   } catch (error) {
+    console.error('Unexpected error in POST /api/admin/projects:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

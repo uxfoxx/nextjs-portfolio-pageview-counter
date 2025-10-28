@@ -68,13 +68,20 @@ export async function PUT(
       })
       .eq('id', params.id)
       .select()
-      .single();
+      .maybeSingle();
 
     if (error) {
       console.error('Supabase update error:', error);
       return NextResponse.json(
         { error: error.message },
         { status: 400 }
+      );
+    }
+
+    if (!data) {
+      return NextResponse.json(
+        { error: 'Project not found' },
+        { status: 404 }
       );
     }
 
@@ -112,13 +119,20 @@ export async function DELETE(
       .from('projects')
       .select('slug')
       .eq('id', params.id)
-      .single();
+      .maybeSingle();
 
     if (fetchError) {
       console.error('Supabase fetch error:', fetchError);
       return NextResponse.json(
         { error: fetchError.message },
         { status: 400 }
+      );
+    }
+
+    if (!project) {
+      return NextResponse.json(
+        { error: 'Project not found' },
+        { status: 404 }
       );
     }
 
@@ -137,9 +151,7 @@ export async function DELETE(
 
     // Revalidate the projects page and the deleted project page
     revalidatePath('/projects');
-    if (project?.slug) {
-      revalidatePath(`/projects/${project.slug}`);
-    }
+    revalidatePath(`/projects/${project.slug}`);
 
     return NextResponse.json({ success: true });
   } catch (error) {
